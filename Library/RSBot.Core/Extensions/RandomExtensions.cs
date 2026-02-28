@@ -5,11 +5,6 @@ namespace RSBot.Core.Extensions;
 public static class RandomExtensions
 {
     /// <summary>
-    /// A thread-safe static random instance for general use.
-    /// </summary>
-    public static readonly Random Random = new Random();
-
-    /// <summary>
     ///     Returns a random floating-point number that is greater than or equal to <paramref name="min" />, and less than
     ///     <paramref name="max" />.
     /// </summary>
