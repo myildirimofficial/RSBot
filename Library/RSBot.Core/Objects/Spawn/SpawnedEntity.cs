@@ -102,7 +102,7 @@ public class SpawnedEntity
             if (Kernel.TickCount - _lastCollisionTick >= 1000)
             {
                 _lastCollisionTick = Kernel.TickCount;
-                _lastCollisionResult = Game.Player.Position.HasCollisionBetween(Position);
+                _lastCollisionResult = Game.Player != null && Game.Player.Position.HasCollisionBetween(Position);
             }
 
             return _lastCollisionResult;
@@ -160,9 +160,8 @@ public class SpawnedEntity
 
             Movement.Angle = MathF.Atan2(yDelta, xDelta);
 
-            CalculateMovingConditional();
-
-            Movement.Moving = true;
+            // Refactored: Only flag as moving if the calculation succeeded
+            Movement.Moving = CalculateMovingConditional();
         }
     }
 
@@ -172,16 +171,21 @@ public class SpawnedEntity
         State.RunSpeed = run;
 
         if (Movement.HasDestination && Movement.Moving)
-            CalculateMovingConditional();
+        {
+            // Refactored: Re-evaluate movement state based on new speed
+            Movement.Moving = CalculateMovingConditional();
+        }
     }
 
     public void SetSource(Position source)
     {
         Movement.Source = source;
-        //SetAngle(source.Angle);
 
         if (Movement.Moving)
-            CalculateMovingConditional();
+        {
+            // Refactored: Re-evaluate movement state based on new source
+            Movement.Moving = CalculateMovingConditional();
+        }
     }
 
     internal void SetAngle(float angle)
@@ -205,7 +209,10 @@ public class SpawnedEntity
         }
     }
 
-    private void CalculateMovingConditional()
+    /// <summary>
+    /// Calculates movement vectors and time. Returns true if calculation is valid.
+    /// </summary>
+    private bool CalculateMovingConditional()
     {
         var position = Movement.Source;
         var diffX = Movement.Destination.X - position.X;
@@ -216,13 +223,35 @@ public class SpawnedEntity
 
         // Don't move if too close to destination
         if (distance <= 1)
-            return;
+        {
+            StopMoving();
+            return false;
+        }
 
-        // Calculate movement and move time
-        var remaining = TimeSpan.FromSeconds(distance / speed);
+        // Use Epsilon to prevent floating point division by near-zero values
+        const float epsilon = 0.001f;
+        if (MathF.Abs(speed) < epsilon || float.IsNaN(speed) || float.IsInfinity(speed))
+        {
+            StopMoving();
+            return false;
+        }
+
+        // Calculate move time
+        var seconds = distance / speed;
+
+        // Validate time bounds to prevent TimeSpan OverflowException
+        if (double.IsNaN(seconds) || double.IsInfinity(seconds) || seconds <= 0 || seconds > 3600) // 3600s = 1 hour absolute max limit
+        {
+            StopMoving();
+            return false;
+        }
+
+        var remaining = TimeSpan.FromSeconds(seconds);
         Movement.MovingX = diffX / remaining.TotalSeconds;
         Movement.MovingY = diffY / remaining.TotalSeconds;
         Movement.RemainingTime = remaining;
+
+        return true;
     }
 
     private void CheckMovement(int delta)
