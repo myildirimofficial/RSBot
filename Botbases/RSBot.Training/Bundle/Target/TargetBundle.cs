@@ -70,6 +70,20 @@ internal class TargetBundle : IBundle
             }
         );
 
+        var leaderTarget = GetFromPartyLeader();
+        if (leaderTarget != null && Game.SelectedEntity?.UniqueId != leaderTarget.UniqueId)
+        {
+            Log.Debug($"[TargetBundle] Following party leader's target: {leaderTarget.Record?.GetRealName()}");
+
+            if (leaderTarget.TrySelect())
+                Bundles.Movement.LastEntityWasBehindObstacle = false;
+
+            return;
+        }
+
+        if (leaderTarget != null)
+            return;
+
         var attacker = GetFromCurrentAttackers();
         if (attacker != null && Game.SelectedEntity == null)
         {
@@ -114,6 +128,28 @@ internal class TargetBundle : IBundle
 
         if (monster.TrySelect())
             Bundles.Movement.LastEntityWasBehindObstacle = false;
+    }
+
+    private SpawnedMonster GetFromPartyLeader()
+    {
+        if (!PlayerConfig.Get<bool>("RSBot.Training.checkAttackPartyLeaderTarget"))
+            return null;
+
+        var leader = Game.Party?.Leader;
+        if (leader == null || leader.Name == Game.Player.Name)
+            return null;
+
+        var leaderPlayer = leader.Player;
+        if (leaderPlayer == null || leaderPlayer.TargetId == 0)
+            return null;
+
+        if (!SpawnManager.TryGetEntity<SpawnedMonster>(leaderPlayer.TargetId, out var target))
+            return null;
+
+        if (target.State.LifeState != LifeState.Alive)
+            return null;
+
+        return target;
     }
 
     private SpawnedMonster GetFromCurrentAttackers()

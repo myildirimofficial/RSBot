@@ -90,6 +90,7 @@
             linkAttackWeakerMobsHelp = new System.Windows.Forms.LinkLabel();
             checkAttackWeakerFirst = new SDUI.Controls.CheckBox();
             checkBoxDimensionPillar = new SDUI.Controls.CheckBox();
+            checkAttackPartyLeaderTarget = new SDUI.Controls.CheckBox();
             timerGrabByAbilityPet = new System.Windows.Forms.Timer(components);
             toolTip1 = new System.Windows.Forms.ToolTip(components);
             groupBox2.SuspendLayout();
@@ -734,12 +735,13 @@
             groupBoxAdvanced.Controls.Add(linkAttackWeakerMobsHelp);
             groupBoxAdvanced.Controls.Add(checkAttackWeakerFirst);
             groupBoxAdvanced.Controls.Add(checkBoxDimensionPillar);
+            groupBoxAdvanced.Controls.Add(checkAttackPartyLeaderTarget);
             groupBoxAdvanced.Location = new System.Drawing.Point(262, 300);
             groupBoxAdvanced.Name = "groupBoxAdvanced";
             groupBoxAdvanced.Padding = new System.Windows.Forms.Padding(3, 8, 3, 3);
             groupBoxAdvanced.Radius = 10;
             groupBoxAdvanced.ShadowDepth = 4;
-            groupBoxAdvanced.Size = new System.Drawing.Size(478, 106);
+            groupBoxAdvanced.Size = new System.Drawing.Size(478, 130);
             groupBoxAdvanced.TabIndex = 6;
             groupBoxAdvanced.TabStop = false;
             groupBoxAdvanced.Text = "Advanced";
@@ -802,7 +804,23 @@
             checkBoxDimensionPillar.Text = "Ignore Dimension Pillar";
             checkBoxDimensionPillar.UseVisualStyleBackColor = false;
             checkBoxDimensionPillar.CheckedChanged += settings_CheckedChanged;
-            // 
+            //
+            // checkAttackPartyLeaderTarget
+            //
+            checkAttackPartyLeaderTarget.AutoSize = true;
+            checkAttackPartyLeaderTarget.BackColor = System.Drawing.Color.Transparent;
+            checkAttackPartyLeaderTarget.Depth = 0;
+            checkAttackPartyLeaderTarget.Location = new System.Drawing.Point(21, 99);
+            checkAttackPartyLeaderTarget.Margin = new System.Windows.Forms.Padding(0);
+            checkAttackPartyLeaderTarget.MouseLocation = new System.Drawing.Point(-1, -1);
+            checkAttackPartyLeaderTarget.Name = "checkAttackPartyLeaderTarget";
+            checkAttackPartyLeaderTarget.Ripple = true;
+            checkAttackPartyLeaderTarget.Size = new System.Drawing.Size(263, 30);
+            checkAttackPartyLeaderTarget.TabIndex = 9;
+            checkAttackPartyLeaderTarget.Text = "Attack party leader's target";
+            checkAttackPartyLeaderTarget.UseVisualStyleBackColor = false;
+            checkAttackPartyLeaderTarget.CheckedChanged += settings_CheckedChanged;
+            //
             // timerGrabByAbilityPet
             // 
             timerGrabByAbilityPet.Enabled = true;
@@ -877,6 +895,7 @@
         private SDUI.Controls.GroupBox groupBoxAdvanced;
         private SDUI.Controls.CheckBox checkBoxDimensionPillar;
         private SDUI.Controls.CheckBox checkAttackWeakerFirst;
+        private SDUI.Controls.CheckBox checkAttackPartyLeaderTarget;
         private System.Windows.Forms.LinkLabel linkAttackWeakerMobsHelp;
         private System.Windows.Forms.LinkLabel linkRecord;
         private System.Windows.Forms.Timer timerGrabByAbilityPet;
